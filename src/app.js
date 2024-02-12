@@ -1,14 +1,15 @@
 const express = require("express");
 const database = require("../database");
-afterAll(() => database.end());
 
 const app = express();
+app.use(express.json());
 
 const movieControllers = require("./controllers/movieControllers");
 
 app.get("/api/movies", movieControllers.getMovies);
 app.get("/api/movies/:id", movieControllers.getMovieById);
-
+app.post("/api/movies", movieControllers.postMovie);
+app.post("/api/users", movieControllers.postUsers);
 // Route GET /api/users
 app.get("/api/users", (req, res) => {
   database
