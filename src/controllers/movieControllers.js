@@ -25,20 +25,40 @@ const movies = [
   },
 ];
 
+const database = require("../../database");
+
 const getMovies = (req, res) => {
-  res.json(movies);
+  database
+    .query("select * from movies")
+    .then(([movies]) => {
+      res.json(movies); // use res.json instead of console.log
+    })
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(500);
+    });
 };
 
 const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
 
-  const movie = movies.find((movie) => movie.id === id);
+  database
+    .query("select * from movies where id = ?", [id])
+    .then(([result]) => {
+      // Si aucun film n'est retourné, renvoyer un statut 404
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "Movie not found" });
+      }
 
-  if (movie != null) {
-    res.json(movie);
-  } else {
-    res.status(404).send("Not Found");
-  }
+      // S'il y a un film retourné, renvoyer l'objet film
+      const movie = result[0];
+      return res.json(movie);
+    })
+    .catch((error) => {
+      console.error("Error retrieving movie:", error);
+      // Renvoyer un statut 500 pour toute erreur
+      return res.status(500).json({ message: "Internal Server Error" });
+    });
 };
 
 module.exports = {
