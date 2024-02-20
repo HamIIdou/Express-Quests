@@ -1,10 +1,10 @@
 const database = require("../../database");
 
-const getMovies = (req, res) => {
+const getUsers = (req, res) => {
   database
-    .query("select * from movies")
-    .then(([movies]) => {
-      res.json(movies); // use res.json instead of console.log
+    .query("select * from users")
+    .then(([users]) => {
+      res.json(users); // use res.json instead of console.log
     })
     .catch((err) => {
       console.error(err);
@@ -12,13 +12,13 @@ const getMovies = (req, res) => {
     });
 };
 
-const getMovieById = (req, res) => {
+const getUsersById = (req, res) => {
   const id = parseInt(req.params.id);
   database
-    .query("select * from movies where id = ?", [id])
-    .then(([movies]) => {
-      if (movies[0] != null) {
-        res.json(movies[0]);
+    .query("select * from users where id = ?", [id])
+    .then(([users]) => {
+      if (users[0] != null) {
+        res.json(users[0]);
       } else {
         res.status(404).send("Not Found");
       }
@@ -29,12 +29,12 @@ const getMovieById = (req, res) => {
     });
 };
 
-const postMovie = (req, res) => {
-  const { title, director, year, color, duration } = req.body;
+const postUser = (req, res) => {
+  const { firstname, lastname, email, city, language } = req.body;
   database
     .query(
-      "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
-      [title, director, year, color, duration]
+      "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
+      [firstname, lastname, email, city, language]
     )
     .then(([result]) => {
       res.status(201).send({ id: result.insertId });
@@ -45,14 +45,14 @@ const postMovie = (req, res) => {
     });
 };
 
-const updateMovie = (req, res) => {
+const updateUser = (req, res) => {
   const id = parseInt(req.params.id);
-  const { title, director, year, color, duration } = req.body;
+  const { firstname, lastname, email, city, language } = req.body;
 
   database
     .query(
-      "update movies set title = ?, director = ?, year = ?, color = ?, duration = ? where id = ?",
-      [title, director, year, color, duration, id]
+      "update users set firstname = ?, lastname = ?, email = ?, city = ?, language = ? where id = ?",
+      [firstname, lastname, email, city, language, id]
     )
     .then(([result]) => {
       if (result.affectedRows === 0) {
@@ -68,8 +68,8 @@ const updateMovie = (req, res) => {
 };
 
 module.exports = {
-  getMovies,
-  getMovieById,
-  postMovie,
-  updateMovie,
+  getUsersById,
+  getUsers,
+  postUser,
+  updateUser,
 };
